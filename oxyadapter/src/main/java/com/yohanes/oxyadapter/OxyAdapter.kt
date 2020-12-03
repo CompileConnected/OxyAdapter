@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
+fun oxyadapter(init: OxyAdapter.Companion.Build.() -> Unit) =
+    OxyAdapter.Companion.Build(init).build()
 
 class OxyAdapter private constructor(
     private val data: List<ViewHolderModel<Any>>,
@@ -50,10 +52,6 @@ class OxyAdapter private constructor(
 
             fun build() = OxyAdapter(dataHolder, register)
         }
-
-        @JvmStatic
-        fun oxyadapter(init: Build.() -> Unit) = Build(init).build()
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
