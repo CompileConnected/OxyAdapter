@@ -1,5 +1,6 @@
 package com.yohanes.oxyadapter
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
@@ -8,63 +9,62 @@ class OxyAdapter private constructor(
     private val data: List<ViewHolderModel<Any>>,
     private val _onBindViewHolder: OnBindViewHolder?
 ) : RecyclerView.Adapter<RecyclerViewHolder>() {
+    companion object {
+        class Build constructor() {
+            constructor(init: Build.() -> Unit) : this() {
+                init()
+            }
 
-    @Suppress("UNCHECKED_CAST")
-    class Build constructor() {
-        constructor(init: Build.() -> Unit) : this() {
-            init()
-        }
-
-        private var dataHolder: List<ViewHolderModel<Any>> = emptyList()
-        private var register: OnBindViewHolder? = null
-        private var pool: RecyclerView.RecycledViewPool? = null
+            private var dataHolder: List<ViewHolderModel<Any>> = emptyList()
+            private var register: OnBindViewHolder? = null
+            private var pool: RecyclerView.RecycledViewPool? = null
 
 
-        fun data(init: () -> List<ViewHolderModel<Any>>) = apply {
-            dataHolder = init()
-        }
+            fun data(init: () -> List<ViewHolderModel<Any>>): Build {
+                dataHolder = init()
+                return this
+            }
 
-        @JvmName("register1")
-        fun <T : ViewHolderModel<Any>> register(init: (view: RecyclerViewHolder, data: T) -> Unit) =
-            apply {
+            @JvmName("register1")
+            fun <T : ViewHolderModel<Any>> register(init: (view: RecyclerViewHolder, data: T) -> Unit): Build {
                 this.register = object : OnBindViewHolder {
                     override fun execute(view: RecyclerViewHolder, data: ViewHolderModel<Any>) {
                         init(view, data as T)
                     }
                 }
+                return this
             }
 
-        fun register(init: (view: RecyclerViewHolder, data: ViewHolderModel<Any>) -> Unit) =
-            apply {
+            fun register(init: (view: RecyclerViewHolder, data: ViewHolderModel<Any>) -> Unit): Build {
                 this.register = object : OnBindViewHolder {
-                    override fun execute(view: RecyclerViewHolder, data: ViewHolderModel<Any>) {
+                    override fun execute(view: RecyclerViewHolder, data: ViewHolderModel<Any>) =
                         init(view, data)
-                    }
                 }
+                return this
             }
 
-        fun getPool(): RecyclerView.RecycledViewPool {
-            if (pool == null) {
-                pool = RecyclerView.RecycledViewPool()
+            fun getPool(): RecyclerView.RecycledViewPool {
+                if (pool == null) pool = RecyclerView.RecycledViewPool()
+                return pool!!
             }
-            return pool!!
+
+            fun build() = OxyAdapter(dataHolder, register)
         }
 
-        fun build() = OxyAdapter(dataHolder, register)
-    }
+        @JvmStatic
+        fun oxyadapter(init: Build.() -> Unit) = Build(init).build()
 
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         when (viewType) {
             0 -> throw Exception("OxyAdapter onCreateViewHolder, viewType of $viewType not found")
-            else -> RecyclerViewHolder(parent.inflate(viewType))
+            else -> RecyclerViewHolder(
+                LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+            )
         }
 
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-//        Log.d(
-//            "OxyAdapter",
-//            "onBindViewHolder ${holder.itemViewType} position: ${holder.adapterPosition} ${holder.isRecyclable}"
-//        )
         _onBindViewHolder?.execute(holder, data[position])
     }
 
@@ -79,7 +79,7 @@ class OxyAdapter private constructor(
     }
 
 
-    interface OnBindViewHolder {
+    private interface OnBindViewHolder {
         fun execute(view: RecyclerViewHolder, data: ViewHolderModel<Any>)
     }
 }
