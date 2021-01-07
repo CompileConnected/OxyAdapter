@@ -2,6 +2,8 @@ package com.yohanes.oxyadapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 
 fun oxyadapter(init: OxyAdapter.Companion.Build.() -> Unit) =
@@ -54,12 +56,29 @@ class OxyAdapter private constructor(
         }
     }
 
+    private val sMap = HashMap<Int, Boolean>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         when (viewType) {
             0 -> throw Exception("OxyAdapter onCreateViewHolder, viewType of $viewType not found")
-            else -> RecyclerViewHolder(
-                LayoutInflater.from(parent.context).inflate(viewType, parent, false)
-            )
+            else -> {
+                if (sMap[viewType] != null) {
+                    val vb: ViewDataBinding = DataBindingUtil.inflate(
+                        LayoutInflater.from(parent.context),
+                        viewType,
+                        parent,
+                        false
+                    )
+                    RecyclerViewHolder(
+                        vb.root,
+                        vb
+                    )
+                } else {
+                    RecyclerViewHolder(
+                        LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+                    )
+                }
+            }
         }
 
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
@@ -72,6 +91,10 @@ class OxyAdapter private constructor(
         val x = data[position]
         return when {
             x is LoadingViewHolderModel<Any> && x.isLoading -> x.loadingResId
+            x is BindViewHolderModel<*> -> {
+                sMap[x.layoutResId] = true
+                x.layoutResId
+            }
             else -> x.layoutResId
         }
     }

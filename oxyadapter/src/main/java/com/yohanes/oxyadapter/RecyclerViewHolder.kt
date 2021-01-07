@@ -1,6 +1,8 @@
 package com.yohanes.oxyadapter
 
 import android.view.View
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+open class RecyclerViewHolder(itemView: View, val binding: ViewDataBinding? = null) :
+    RecyclerView.ViewHolder(binding?.root ?: itemView)
