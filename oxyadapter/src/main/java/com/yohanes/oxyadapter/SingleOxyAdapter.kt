@@ -35,7 +35,7 @@ class SingleOxyAdapter<VH : OxyViewHolder>(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val vhm = viewHolderModelList[position]
-        vhm.onBind(holder, position)
+        vhm.externalBinder?.onBind(holder, vhm)
     }
 
     override fun getItemCount() = viewHolderModelList.size
