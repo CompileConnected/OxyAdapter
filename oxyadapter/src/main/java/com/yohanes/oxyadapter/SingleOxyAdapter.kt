@@ -5,6 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yohanes.oxyadapter.core.OxyViewHolder
 import com.yohanes.oxyadapter.core.ViewHolderModel
+import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.MERGE_BINDING
+import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.MERGE_BINDING_PRIORITY_EXTERNAL
+import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.USE_DEFAULT_BINDING
+import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.USE_EXTERNAL_BINDING_ONLY
 
 class SingleOxyAdapter<VH : OxyViewHolder>(
     private val viewHolderModelList: ArrayList<ViewHolderModel<VH>>,
@@ -35,7 +39,18 @@ class SingleOxyAdapter<VH : OxyViewHolder>(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val vhm = viewHolderModelList[position]
-        vhm.externalBinder?.onBind(holder, vhm)
+        when (vhm.bindingStrategy) {
+            MERGE_BINDING_PRIORITY_EXTERNAL -> {
+                vhm.externalBinder?.onBind(holder, vhm)
+                vhm.onBind(holder, vhm)
+            }
+            MERGE_BINDING -> {
+                vhm.onBind(holder, vhm)
+                vhm.externalBinder?.onBind(holder, vhm)
+            }
+            USE_EXTERNAL_BINDING_ONLY -> vhm.externalBinder?.onBind(holder, vhm)
+            USE_DEFAULT_BINDING -> vhm.onBind(holder, vhm)
+        }
     }
 
     override fun getItemCount() = viewHolderModelList.size
