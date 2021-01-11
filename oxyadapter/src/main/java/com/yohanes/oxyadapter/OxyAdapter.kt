@@ -1,5 +1,6 @@
 package com.yohanes.oxyadapter
 
+import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -56,13 +57,13 @@ class OxyAdapter private constructor(
         }
     }
 
-    private val sMap = HashMap<Int, Boolean>()
+    private val sMap = SparseBooleanArray()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         when (viewType) {
             0 -> throw Exception("OxyAdapter onCreateViewHolder, viewType of $viewType not found")
             else -> {
-                if (sMap[viewType] != null) {
+                if (sMap.get(viewType, false)) {
                     val vb: ViewDataBinding = DataBindingUtil.inflate(
                         LayoutInflater.from(parent.context),
                         viewType,
@@ -92,7 +93,7 @@ class OxyAdapter private constructor(
         return when {
             x is LoadingViewHolderModel<Any> && x.isLoading -> x.loadingResId
             x is BindViewHolderModel<*> -> {
-                sMap[x.layoutResId] = true
+                sMap.append(x.layoutResId, true)
                 x.layoutResId
             }
             else -> x.layoutResId

@@ -13,12 +13,9 @@ android {
     defaultConfig {
         minSdkVersion 16
         versionCode 1
-        versionName "1.0.7"
+        versionName "1.0.8"
         consumerProguardFiles 'consumer-proguard-rules.pro'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-    buildFeatures {
-        dataBinding true
     }
     buildTypes {
         release {
@@ -38,6 +35,16 @@ android {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api 'androidx.recyclerview:recyclerview:1.1.0'
+    compileOnly("androidx.databinding:databinding-runtime:$databinding_version") {
+        transitive = false
+    }
+    compileOnly("androidx.databinding:databinding-common:$databinding_version") {
+        transitive = false
+    }
+    compileOnly("androidx.databinding:viewbinding:$databinding_version") {
+        transitive = false
+    }
+    compileOnly("androidx.annotation:annotation:1.1.0")
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
