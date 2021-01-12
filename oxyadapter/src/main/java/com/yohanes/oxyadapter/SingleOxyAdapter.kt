@@ -41,15 +41,15 @@ class SingleOxyAdapter<VH : OxyViewHolder>(
         val vhm = viewHolderModelList[position]
         when (vhm.bindingStrategy) {
             MERGE_BINDING_PRIORITY_EXTERNAL -> {
-                vhm.externalBinder?.onBind(holder, vhm)
-                vhm.onBind(holder, vhm)
+                vhm.externalBinder?.onBind(holder)
+                vhm.onInternalBind(holder)
             }
             MERGE_BINDING -> {
-                vhm.onBind(holder, vhm)
-                vhm.externalBinder?.onBind(holder, vhm)
+                vhm.onInternalBind(holder)
+                vhm.externalBinder?.onBind(holder)
             }
-            USE_EXTERNAL_BINDING_ONLY -> vhm.externalBinder?.onBind(holder, vhm)
-            USE_DEFAULT_BINDING -> vhm.onBind(holder, vhm)
+            USE_EXTERNAL_BINDING_ONLY -> vhm.externalBinder?.onBind(holder)
+            USE_DEFAULT_BINDING -> vhm.onInternalBind(holder)
         }
     }
 

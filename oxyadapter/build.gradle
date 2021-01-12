@@ -35,10 +35,10 @@ android {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api 'androidx.recyclerview:recyclerview:1.1.0'
-    compileOnly("androidx.databinding:viewbinding:$viewbinding_version") {
+    api("androidx.databinding:viewbinding:$viewbinding_version") {
         transitive = false
     }
-    compileOnly("androidx.annotation:annotation:1.1.0")
+    api("androidx.annotation:annotation:1.1.0")
     testImplementation 'junit:junit:4.13.1'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
