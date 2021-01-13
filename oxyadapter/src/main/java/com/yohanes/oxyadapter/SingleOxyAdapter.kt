@@ -11,21 +11,24 @@ import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.USE_DEFAULT_BINDING
 import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.USE_EXTERNAL_BINDING_ONLY
 
 class SingleOxyAdapter<VH : OxyViewHolder>(
-    private val viewHolderModelList: ArrayList<ViewHolderModel<VH>>,
+    private val viewHolderModelList: List<ViewHolderModel<VH>>,
 ) : RecyclerView.Adapter<VH>() {
 
     class Build constructor() {
-        private val h = arrayListOf<ViewHolderModel<*>>()
+        private var h: List<ViewHolderModel<*>> = emptyList()
+        private var isDataAdded = false
 
         constructor(init: Build.() -> Unit) : this() {
             init()
         }
 
         fun data(data: List<ViewHolderModel<*>>) {
-            this.h.addAll(data)
+            isDataAdded = true
+            this.h = data
         }
 
-        fun build() = OxyAdapter(h)
+        fun build() =
+            if (isDataAdded) OxyAdapter(h) else throw Error("Must add the data in function data()")
     }
 
     private var lastViewType: ViewHolderModel<VH>? = null
