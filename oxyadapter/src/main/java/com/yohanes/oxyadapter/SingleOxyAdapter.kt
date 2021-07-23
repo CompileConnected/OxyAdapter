@@ -15,7 +15,7 @@ class SingleOxyAdapter<VH : OxyViewHolder>(
 ) : RecyclerView.Adapter<VH>() {
 
     class Build constructor() {
-        private var h: List<ViewHolderModel<*>> = emptyList()
+        private var h: Collection<ViewHolderModel<*>> = emptyList()
         private var isDataAdded = false
 
         constructor(init: Build.() -> Unit) : this() {
@@ -28,10 +28,8 @@ class SingleOxyAdapter<VH : OxyViewHolder>(
         }
 
         fun build() =
-            if (isDataAdded) OxyAdapter(h) else throw Error("Must add the data in function data()")
+            if (isDataAdded) OxyAdapter(ArrayList(h)) else throw Error("Must add the data in function data()")
     }
-    
-    private fun getList() = viewHolderModelList
 
     private var lastViewType: ViewHolderModel<VH>? = null
 
@@ -60,6 +58,7 @@ class SingleOxyAdapter<VH : OxyViewHolder>(
 
     override fun getItemCount() = viewHolderModelList.size
 
+    private fun getList() = viewHolderModelList
 
     override fun getItemViewType(position: Int): Int {
         lastViewType = viewHolderModelList[position]
