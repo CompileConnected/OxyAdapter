@@ -23,12 +23,7 @@ abstract class ViewHolderModel<VH : OxyViewHolder> {
     open fun onInternalBind(holder: VH) {}
 
     fun bind(b: (holder: VH) -> Unit) {
-        val s: ExternalBindViewHolder<VH> =
-            object : ExternalBindViewHolder<VH> {
-                override fun onBind(holder: VH) {
-                    b.invoke(holder)
-                }
-            }
+        val s: ExternalBindViewHolder<VH> = ExternalBindViewHolder { holder -> b.invoke(holder) }
         this.externalBinder = s
     }
 }
