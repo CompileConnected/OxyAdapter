@@ -58,7 +58,7 @@ class SingleOxyAdapter<VH : OxyViewHolder>(
 
     override fun getItemCount() = viewHolderModelList.size
 
-    private fun getList() = viewHolderModelList
+    fun getList() = viewHolderModelList
 
     override fun getItemViewType(position: Int): Int {
         lastViewType = viewHolderModelList[position]
