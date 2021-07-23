@@ -3,26 +3,26 @@ package com.yohanes.oxyadapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.yohanes.oxyadapter.core.BaseViewHolderModel
+import com.yohanes.oxyadapter.core.BaseViewHolderModel.Companion.MERGE_BINDING
+import com.yohanes.oxyadapter.core.BaseViewHolderModel.Companion.MERGE_BINDING_PRIORITY_EXTERNAL
+import com.yohanes.oxyadapter.core.BaseViewHolderModel.Companion.USE_DEFAULT_BINDING
+import com.yohanes.oxyadapter.core.BaseViewHolderModel.Companion.USE_EXTERNAL_BINDING_ONLY
 import com.yohanes.oxyadapter.core.OxyViewHolder
-import com.yohanes.oxyadapter.core.ViewHolderModel
-import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.MERGE_BINDING
-import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.MERGE_BINDING_PRIORITY_EXTERNAL
-import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.USE_DEFAULT_BINDING
-import com.yohanes.oxyadapter.core.ViewHolderModel.Companion.USE_EXTERNAL_BINDING_ONLY
 
 class SingleOxyAdapter<VH : OxyViewHolder>(
-    private val viewHolderModelList: ArrayList<ViewHolderModel<VH>>,
+    private val viewHolderModelList: ArrayList<BaseViewHolderModel<VH>>,
 ) : RecyclerView.Adapter<VH>() {
 
     class Build constructor() {
-        private var h: Collection<ViewHolderModel<*>> = emptyList()
+        private var h: Collection<BaseViewHolderModel<*>> = emptyList()
         private var isDataAdded = false
 
         constructor(init: Build.() -> Unit) : this() {
             init()
         }
 
-        fun data(data: List<ViewHolderModel<*>>) {
+        fun data(data: List<BaseViewHolderModel<*>>) {
             isDataAdded = true
             this.h = data
         }
@@ -31,7 +31,7 @@ class SingleOxyAdapter<VH : OxyViewHolder>(
             if (isDataAdded) OxyAdapter(ArrayList(h)) else throw Error("Must add the data in function data()")
     }
 
-    private var lastViewType: ViewHolderModel<VH>? = null
+    private var lastViewType: BaseViewHolderModel<VH>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val inflater = LayoutInflater.from(parent.context)
@@ -60,13 +60,21 @@ class SingleOxyAdapter<VH : OxyViewHolder>(
 
     fun getList() = viewHolderModelList
 
+    fun add(data: BaseViewHolderModel<*>) {
+        viewHolderModelList.add(data as BaseViewHolderModel<VH>)
+    }
+
+    fun addAll(data: List<BaseViewHolderModel<*>>) {
+        data.forEach { add(it) }
+    }
+
     override fun getItemViewType(position: Int): Int {
         lastViewType = viewHolderModelList[position]
         return lastViewType!!.layoutId
     }
 
-    private fun getItemViewTypeFor(viewType: Int): ViewHolderModel<VH> {
-        var res: ViewHolderModel<VH>? = null
+    private fun getItemViewTypeFor(viewType: Int): BaseViewHolderModel<VH> {
+        var res: BaseViewHolderModel<VH>? = null
 
         if (lastViewType != null && lastViewType?.layoutId == viewType) {
             res = lastViewType
